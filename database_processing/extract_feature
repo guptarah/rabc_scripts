@@ -1,0 +1,12 @@
+#! /bin/bash
+
+mkdir '/home/rahul/Desktop/rabc_features/'
+
+for files in /media/CARE/r-abc/cropped_audio_16/* 
+do
+	save_dir_name=$(basename $files)
+	save_dir_name='/home/rahul/Desktop/rabc_features/'${save_dir_name:0:5}
+	mkdir $save_dir_name	
+
+	praat /media/CARE/r-abc/scripts/extract_prosody_for_a_given_file.praat $files $save_dir_name	
+done

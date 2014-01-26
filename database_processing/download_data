@@ -1,0 +1,6 @@
+#! /bin/bash
+
+# script to download relevant files only from the server
+wget -np -nc -rl0 https://www.hsi.gatech.edu/csl-share/RapidABC/ --user=snarayanan --password=c4Kz#7VDUY --reject=index.html,avi -A mic_center_cropped.wav
+wget -np -nc -rl0 https://www.hsi.gatech.edu/csl-share/RapidABC/Elan_Full_annotation/ --user=snarayanan --password=c4Kz#7VDUY 
+

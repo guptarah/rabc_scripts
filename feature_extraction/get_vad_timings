@@ -1,0 +1,36 @@
+#! /bin/bash
+
+# script to get the vad for psyc and child from the annotations and r_abc_start times
+
+rm -r ../../features/rabc_features_vad_timings
+rm -r ../../features/rabc_features_vad_vectorized
+mkdir ../../features/rabc_features_vad_timings
+mkdir ../../features/rabc_features_vad_vectorized
+mkdir ../../features/rabc_features_vad_vectorized/psy
+mkdir ../../features/rabc_features_vad_vectorized/child
+
+for files_start in ../../raw_data/r_abc_start/*
+do
+	# get the vad intervals for the psychologist
+        echo $files_start
+        annotation_file='../../raw_data/rabc_annotations/'$(echo $(basename $files_start) | sed 's/_[0-9]*/_/g;s/_[a-z,\.,_]*$//g' | sed 's/_[_]*/_/g')'_complete.txt'
+        echo $annotation_file
+	
+	ant_start_cue=$(cat $files_start | cut -f3)
+	echo $ant_start_cue
+
+	start_line=$(grep '^speech_e' $annotation_file | grep -n $ant_start_cue | head -n 1 | cut -d':' -f1)
+	echo $start_line
+
+	grep '^speech_e' $annotation_file | tail -n +$start_line | cut -f4,6 > ../../features/rabc_features_vad_timings/$(basename $files_start).psy
+
+	# get the vad intervals for the child
+	grep '^speech_c' $annotation_file | cut -f4,6 > ../../features/rabc_features_vad_timings/$(basename $files_start).child
+
+	# get start and end times to shorten the VAD times
+	grep $(basename $files_start) ../../raw_data/start_times | cut -f6 >../../features/rabc_features_vad_timings/$(basename $files_start).vad_len
+
+	echo "python get_vad_vector_psy.py ../../features/rabc_features_vad_timings/$(basename $files_start) ../../features/rabc_features_vad_vectorized/psy/$(basename $files_start)"	
+	python get_vad_vector_psy.py ../../features/rabc_features_vad_timings/$(basename $files_start) ../../features/rabc_features_vad_vectorized/psy/$(basename $files_start)
+	python get_vad_vector_child.py ../../features/rabc_features_vad_timings/$(basename $files_start) ../../features/rabc_features_vad_vectorized/child/$(basename $files_start)
+done

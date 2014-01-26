@@ -1,0 +1,21 @@
+#! /bin/bash
+
+rm ../raw_data/start_times
+
+for files_start in ../raw_data/r_abc_start/*
+do
+	echo $files_start
+	annotation_file='../raw_data/rabc_annotations/'$(echo $(basename $files_start) | sed 's/_[0-9]*/_/g;s/_[a-z,\.,_]*$//g' | sed 's/_[_]*/_/g')'_complete.txt'
+	echo $annotation_file
+
+	ant_start_time=$(cat $files_start | cut -f1)
+	ant_start_cue=$(cat $files_start | cut -f3)
+
+	vid_ant_start=$(grep "$ant_start_cue" $annotation_file | head -n1 | cut -f4)
+	vid_ant_end=$(grep "^stages" $annotation_file |grep "tickle" | tail -n1 | cut -f6)
+
+	duration=$(echo $vid_ant_end - $vid_ant_start | bc -l)
+
+	echo $(echo $(basename $files_start) | sed 's/_[0-9]*/_/g;s/_[a-z,\.,_]*$//g' | sed 's/_[_]*/_/g')"	"$(basename $files_start)"	"$ant_start_time"	"$vid_ant_start"	"$vid_ant_end"	"$duration >> ../raw_data/start_times
+
+done

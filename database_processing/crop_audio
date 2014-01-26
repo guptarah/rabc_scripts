@@ -1,0 +1,19 @@
+#! /bin/bash
+
+mkdir /media/CARE/r-abc/cropped_audio/
+
+while read line
+do
+file_name=$(echo $line | cut -d' ' -f2)
+echo $file_name
+file_name=${file_name:0:-3}'wav'
+echo $file_name
+file_addr=$(find /media/CARE/r-abc/www.hsi.gatech.edu/csl-share/RapidABC -name $file_name)
+
+start_time=$(echo $line | cut -d' ' -f3)
+time_length=$(echo $line | cut -d' ' -f6)
+
+save_file='/media/CARE/r-abc/cropped_audio/'$file_name
+echo "sox $file_addr $save_file --show-progress trim $start_time $time_length"
+sox $file_addr $save_file --show-progress trim $start_time $time_length
+done < "/media/CARE/r-abc/scripts/start_times"

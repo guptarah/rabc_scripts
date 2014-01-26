@@ -1,0 +1,43 @@
+#! /bin/bash
+
+# script to just get the vector of features from the files in ../../rabc_features after removing the header and adjusting the start time.
+
+feature_dir='../../rabc_features'
+rm -r ../../rabc_features_vectorized
+mkdir ../../rabc_features_vectorized
+
+for dirs in  $feature_dir/*
+do
+	
+	echo $dirs
+	save_dir='../../rabc_features_vectorized/'$(basename $dirs)
+	mkdir $save_dir	
+
+	# process the intensity file
+	for files in $dirs/*intensity
+	do
+		start_time=$(cat $files | sed -n '4p' | cut -d' ' -f5)
+		resolution=$(cat $files | sed -n '4p' | cut -d' ' -f4)
+		append_len=$(echo "$start_time/$resolution" | bc -l)
+		append_len=$( printf "%.0f" $append_len )
+
+		cat <(yes "0" | head -n $append_len) <(tail -n +5 $files) >$save_dir/$(basename $files)
+	done
+
+	# process the pitch file
+        for files in $dirs/*pitch
+        do
+                start_time=$(cat $files | sed -n '4p' | cut -d' ' -f5)
+                resolution=$(cat $files | sed -n '4p' | cut -d' ' -f4)
+                append_len=$(echo "$start_time/$resolution" | bc -l)
+                append_len=$( printf "%.0f" $append_len )
+
+                cat <(yes "0" | head -n $append_len) <(tail -n +5 $files) >$save_dir/$(basename $files)
+        done
+
+	#  process the jit shim file
+	for files in $dirs/*jit_shim
+        do
+                cut -d' ' -f2- $files >$save_dir/$(basename $files)
+        done
+done

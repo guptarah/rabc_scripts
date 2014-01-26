@@ -1,0 +1,9 @@
+#! /bin/bash
+
+input_dir=$1
+output_dir=$2
+
+for files in $input_dir/*
+do
+	sox $files -b 16 $output_dir'/$(basename $files)' -I 22050 dither -s
+done
