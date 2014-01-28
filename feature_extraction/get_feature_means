@@ -1,0 +1,17 @@
+#! /bin/bash
+
+# script to get the means of the psyc and child features to help mean normalize later on
+
+rm -r ../../features/means_stds
+mkdir ../../features/means_stds
+
+for dirs in ../../features/concatenated_features/*
+do
+	mkdir ../../features/means_stds/$(basename $dirs)
+
+	for files in $dirs/*
+	do
+		python get_feat_mean_var.py $files ../../features/means_stds/$(basename $dirs)/$(basename $files)
+	
+	done
+done

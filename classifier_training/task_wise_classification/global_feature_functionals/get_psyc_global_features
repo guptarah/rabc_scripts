@@ -1,0 +1,17 @@
+#! /bin/bash
+
+# script to calculate the global features for the psychologist
+
+for dirs in ../../../../features/task_wise_features/*
+do
+	for sub_dirs in $dirs/*
+	do
+		for task_id in {1..5}
+		do
+			feature_file=$sub_dirs'/task_features.task_id_rect.'$task_id
+			python get_psyc_global_functionals.py $feature_file $feature_file.psy_			
+
+		done
+	done
+done 
+

@@ -1,0 +1,35 @@
+#! /bin/bash
+
+# script to get a vector containig number 1..5 representing the time for the session
+
+rm -r ../../features/session_times
+mkdir ../../features/session_times
+
+for files_start in ../../raw_data/r_abc_start/*
+do
+
+        echo $files_start                                                                         
+        annotation_file='../../raw_data/rabc_annotations/'$(echo $(basename $files_start) | sed 's/_[0-9]*/_/g;s/_[a-z,\.,_]*$//g' | sed 's/_[_]*/_/g')'_complete.txt'
+        echo $annotation_file
+
+	ant_start_cue=$(cat $files_start | cut -f3)
+        echo $ant_start_cue 
+        start_time=$(grep '^speech_e' $annotation_file | grep $ant_start_cue | head -n 1 | cut -f4) 
+	end_time=$(grep "^stages" $annotation_file | grep "tickle" | tail -n1 | cut -f6 )
+	# get session indicator lines
+
+	sessions=("greeting" "ball" "book" "hat" "tickle")
+	
+	mkdir ../../features/session_times/$(basename $annotation_file | cut -d'.' -f1)/
+
+	for ses_id in "${sessions[@]}"
+	do
+		grep "^stages" $annotation_file | grep $ses_id | cut -f4,6,9 >> ../../features/session_times/$(basename $annotation_file | cut -d'.' -f1)/ses_times
+	done
+
+	sed -i 's/greeting/1/g;s/ball/2/g;s/book/3/g;s/hat/4/g;s/tickle/5/g' ../../features/session_times/$(basename $annotation_file | cut -d'.' -f1)/ses_times
+	echo $start_time $end_time >../../features/session_times/$(basename $annotation_file | cut -d'.' -f1)/session_start_end
+
+	python get_session_id_vector.py ../../features/session_times/$(basename $annotation_file | cut -d'.' -f1)/ses_times ../../features/session_times/$(basename $annotation_file | cut -d'.' -f1)/session_start_end ../../features/session_times/$(basename $annotation_file | cut -d'.' -f1)/ses_id_vector
+
+done

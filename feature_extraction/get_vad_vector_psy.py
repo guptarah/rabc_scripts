@@ -24,7 +24,13 @@ for utr_num in range(0,corrected_time.shape[0]):
 # length of vad
 vad_len = numpy.around(vad_len,decimals=2)*100
 print vad_len
+zeros_vad_len = numpy.zeros([vad_len,1])
 
-vad_vector = vad_vector [0:vad_len] 
+if vad_len < vad_vector.shape[0]:
+	vad_vector = vad_vector [0:vad_len] 
+else:
+	print vad_vector.shape,zeros_vad_len.shape
+	zeros_vad_len[0:vad_vector.shape[0]] = vad_vector
+	vad_vector = zeros_vad_len
 
 numpy.savetxt(vad_file_output,vad_vector,fmt='%1e')

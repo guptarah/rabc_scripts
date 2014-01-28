@@ -1,0 +1,36 @@
+#! /bin/bash
+
+# script to combine various features together for later from each subject
+
+rm -r ../../features/concatenated_features
+mkdir ../../features/concatenated_features
+
+for dirs in ../../features/rabc_features_prosody_vectorized/*
+do
+	to_put_dir="../../features/concatenated_features/"$(basename $dirs)
+	mkdir $to_put_dir
+
+		# get the number of sessions
+		for intensity_files in $dirs/*.intensity
+		do
+			echo $intensity_files			
+	
+			# other feature file
+			pitch_file=$(echo $intensity_files | rev | cut -d'.' -f2- | rev )'.pitch'
+			jit_shim_file=$(echo $intensity_files | rev | cut -d'.' -f2- | rev)'.jit_shim'
+
+			# get the session id (as in RA020 or RA020_FU)
+			session_id=$(basename $intensity_files | cut -d'.' -f1 | sed 's/_[0-9]*/_/g;s/_[a-z,\.,_]*$//g' | sed 's/_[_]*/_/g')
+		
+			# get the vads
+			child_vad_file='../../features/rabc_features_vad_vectorized/child/'$(basename $intensity_files | cut -d'.' -f1)'.txt' 
+			psy_vad_file='../../features/rabc_features_vad_vectorized/psy/'$(basename $intensity_files | cut -d'.' -f1)'.txt'
+
+			# get the session id
+			session_id_indicator='../../features/session_times/'$session_id'_complete/ses_id_vector'
+
+
+			# cat the above files (ses_id, psy_vad, child_vad, pitch, intensity, jit, shim	
+			paste -d' ' $session_id_indicator $psy_vad_file $child_vad_file $pitch_file $intensity_files <(cat <(yes "/-/-undefined/-/- /-/-undefined/-/-" | head -n 50) $jit_shim_file <(yes "/-/-undefined/-/- /-/-undefined/-/-" | head -n 50) ) | sed 's/\///g' > $to_put_dir/$session_id
+		done	
+done 
