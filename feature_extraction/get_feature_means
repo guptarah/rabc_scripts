@@ -11,7 +11,9 @@ do
 
 	for files in $dirs/*
 	do
-		python get_feat_mean_var.py $files ../../features/means_stds/$(basename $dirs)/$(basename $files)
+		num_lines=$(cut -d' ' -f6 $files |  grep -v '^$' | wc -l)
+		head -n $num_lines $files | sed 's/--undefined--/-99/g' > ../../features/means_stds/$(basename $dirs)/$(basename $files).matrix
+		python get_feat_mean_var.py ../../features/means_stds/$(basename $dirs)/$(basename $files).matrix ../../features/means_stds/$(basename $dirs)/$(basename $files).mean_std
 	
 	done
 done

@@ -1,0 +1,19 @@
+#! /bin/bash
+
+# z normalize the task wise features 
+
+
+for dirs in ../../features/task_wise_features/*
+do
+	for sub_dirs in $dirs/*
+	do
+		for task_id in {1..5}
+		do
+			feature_file=$sub_dirs/task_features.task_id_rect.$task_id
+			mean_std_file='../../features/means_stds/'$(basename $dirs)/$(basename $sub_dirs).mean_std
+			output_file=$feature_file.normalized			
+	
+			python normalize_feature_file.py $feature_file $mean_std_file $output_file
+		done
+	done
+done
