@@ -1,0 +1,24 @@
+#! /bin/bash
+
+# script to calculate the global features for the child 
+
+rm -r child_global_features
+mkdir child_global_features
+
+for dirs in ../../../../features/task_wise_features/*
+do
+	for sub_dirs in $dirs/*
+	do
+		for task_id in {1..5}
+		do
+			mkdir child_global_features/$(basename $dirs)
+			outdir=child_global_features/$(basename $dirs)/$(basename $sub_dirs)
+			mkdir $outdir
+			feature_file=$sub_dirs'/task_features.task_id_rect.'$task_id.normalized
+			output_file=$outdir/$task_id
+			python get_child_global_functionals.py $feature_file $output_file
+
+		done
+	done
+done 
+

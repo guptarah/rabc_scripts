@@ -1,0 +1,30 @@
+#! /bin/bash
+
+# script to save the engagement score in the directory format
+rm -r ../../features/eng_scores
+mkdir ../../features/eng_scores
+
+for dirs in ../../features/session_times/*
+do
+	session_id=$(echo $(basename $dirs)| rev | cut -d'_' -f2- | rev)
+	echo $session_id
+	grep "$session_id" ../../raw_data/rabc_score | head -n 1	
+	echo "---"
+	
+
+	score1=$(grep "$session_id" ../../raw_data/rabc_score | head -n 1 | cut -f2)
+	score2=$(grep "$session_id" ../../raw_data/rabc_score | head -n 1 | cut -f3)
+	score3=$(grep "$session_id" ../../raw_data/rabc_score | head -n 1 | cut -f4)
+	score4=$(grep "$session_id" ../../raw_data/rabc_score | head -n 1 | cut -f5)
+	score5=$(grep "$session_id" ../../raw_data/rabc_score | head -n 1 | cut -f6)
+
+	# save them to a directory structure
+	mkdir ../../features/eng_scores/$session_id
+	echo $score1 > ../../features/eng_scores/$session_id/'1'
+	echo $score2 > ../../features/eng_scores/$session_id/'2'
+	echo $score3 > ../../features/eng_scores/$session_id/'3'
+	echo $score4 > ../../features/eng_scores/$session_id/'4'
+	echo $score5 > ../../features/eng_scores/$session_id/'5'
+done 
+
+	

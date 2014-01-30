@@ -1,0 +1,24 @@
+#! /bin/bash
+
+# script to calculate the joint global features  
+
+rm -r joint_global_features
+mkdir joint_global_features
+
+for dirs in ../../../../features/task_wise_features/*
+do
+	for sub_dirs in $dirs/*
+	do
+		for task_id in {1..5}
+		do
+			mkdir joint_global_features/$(basename $dirs)
+			outdir=joint_global_features/$(basename $dirs)/$(basename $sub_dirs)
+			mkdir $outdir
+			feature_file=$sub_dirs'/task_features.task_id_rect.'$task_id.normalized
+			output_file=$outdir/$task_id
+			python get_joint_global_functionals.py $feature_file $output_file
+
+		done
+	done
+done 
+
