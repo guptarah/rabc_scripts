@@ -1,0 +1,12 @@
+#! /bin/bash
+
+# feature selection based on j48 tree classifier
+
+input_file=$1
+jvm_mem=2g
+weka_jar=/home/rcf-proj/mv/guptarah/interspeech_ch/scripts/weka-3-6-6/weka.jar
+C=1
+
+java -Xmx$jvm_mem -classpath $weka_jar weka.classifiers.meta.FilteredClassifier -v -o -no-cv -t $input_file  -d svm_model -F "weka.filters.unsupervised.attribute.Remove -R 1-2" -W weka.classifiers.functions.SMO -- -M -C $C -L 0.0010 -P 1.0E-12 -N 1 -V -1 -W 1 -K "weka.classifiers.functions.supportVector.PolyKernel -C 250007 -E 1.0"
+
+java -Xmx$jvm_mem -classpath $weka_jar weka.classifiers.meta.FilteredClassifier -o -l "svm_model" -T $input_file -p 0 -distribution > predictions 

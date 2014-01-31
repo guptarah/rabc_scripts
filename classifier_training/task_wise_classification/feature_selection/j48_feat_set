@@ -1,0 +1,12 @@
+#! /bin/bash
+
+# feature selection based on j48 tree classifier
+
+input_file=$1
+jvm_mem=2g
+weka_jar=/home/rcf-proj/mv/guptarah/interspeech_ch/scripts/weka-3-6-6/weka.jar
+
+# remove the first attribute
+cat $input_file | sed 's/RA[^,]*,//g' | grep -v 'session_id' >cur_feat_file.arff
+
+echo "java -Xmx$jvm_mem -classpath $weka_jar weka.attributeSelection.CfsSubsetEval -M -s \"weka.attributeSelection.BestFirst -D 1 -N 5\" -i cur_feat_file.arff"

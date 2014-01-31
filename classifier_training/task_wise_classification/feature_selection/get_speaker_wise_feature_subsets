@@ -1,0 +1,54 @@
+#! /bin/bash
+
+# script to get psy+joint features, child+joint features, all features whereby normalizing the task length feature
+# make dirs for each child
+
+input_file=$1 #the arff file already made ex: ../global_feature_functionals/all_features.clean.arff
+
+rm -r psy_features
+rm -r child_features
+rm -r all_features
+
+mkdir psy_features
+mkdir child_features
+mkdir all_features
+
+for dirs in ../global_feature_functionals/child_global_features/*
+do
+	child_id=$(basename $dirs)
+	echo $child_id
+	mkdir psy_features/$child_id # dir to save the test and the train file for current child containing only psy and joint features
+	mkdir child_features/$child_id # dir to save test and train file with child features. Child features will be remove if int var is 0, meaning no child speech in task
+	mkdir all_features/$child_id # will contain both features, instances with no child speech removed
+	
+	# get train and test file
+	grep "^$child_id" $input_file | cut -d',' -f2- > test_features.temp
+	grep -v "^$child_id" $input_file | grep "^RA" | cut -d',' -f2- > train_features.temp
+
+	# normalize the task session length based on the mean task length 
+	python normalize_task_len.py train_features.temp test_features.temp
+
+	# prepare header to put
+	grep -v '^RA' $input_file | grep -v 'session_id' > header_file
+
+	rev test_features.temp.task_time_norm | cut -d'.' -f2- | rev >test_features.temp.task_time_norm2
+        mv test_features.temp.task_time_norm2 test_features.temp.task_time_norm
+        rev train_features.temp.task_time_norm | cut -d'.' -f2- | rev >train_features.temp.task_time_norm2
+        mv train_features.temp.task_time_norm2 train_features.temp.task_time_norm
+
+	# saving the train and test file
+	# all the damn features
+	cat header_file train_features.temp.task_time_norm > all_features/$child_id/train_file.arff
+	cat header_file test_features.temp.task_time_norm > all_features/$child_id/test_file.arff
+	
+	# all the psyc features and the joint features
+	cat <(grep -v 'child_feature' header_file) <(cut -d',' -f1-19,38-40 train_features.temp.task_time_norm) >psy_features/$child_id/train_file.arff
+	cat <(grep -v 'child_feature' header_file) <(cut -d',' -f1-19,38-40 test_features.temp.task_time_norm) >psy_features/$child_id/test_file.arff
+
+	# all the child features and the joint features minus where the child did not speak
+	cat <(grep -v 'psy_feature' header_file) <(cut -d',' -f1,20-40 train_features.temp.task_time_norm | sed 's/\(^[^,]*,\)/\1 /g' | grep -v ', 0' | sed 's/, /,/g') >child_features/$child_id/train_file.arff
+        cat <(grep -v 'psy_feature' header_file) <(cut -d',' -f1,20-40 test_features.temp.task_time_norm | sed 's/\(^[^,]*,\)/\1 /g' | grep -v ', 0' | sed 's/, /,/g') >child_features/$child_id/test_file.arff
+	
+		
+done
+

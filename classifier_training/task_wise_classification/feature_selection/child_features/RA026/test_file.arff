@@ -1,0 +1,26 @@
+@RELATION rabc_features
+
+@ATTRIBUTE task_id NUMERIC
+@ATTRIBUTE child_feature1 NUMERIC
+@ATTRIBUTE child_feature2 NUMERIC
+@ATTRIBUTE child_feature3 NUMERIC
+@ATTRIBUTE child_feature4 NUMERIC
+@ATTRIBUTE child_feature5 NUMERIC
+@ATTRIBUTE child_feature6 NUMERIC
+@ATTRIBUTE child_feature7 NUMERIC
+@ATTRIBUTE child_feature8 NUMERIC
+@ATTRIBUTE child_feature9 NUMERIC
+@ATTRIBUTE child_feature10 NUMERIC
+@ATTRIBUTE child_feature11 NUMERIC
+@ATTRIBUTE child_feature12 NUMERIC
+@ATTRIBUTE child_feature13 NUMERIC
+@ATTRIBUTE child_feature14 NUMERIC
+@ATTRIBUTE child_feature15 NUMERIC
+@ATTRIBUTE child_feature16 NUMERIC
+@ATTRIBUTE child_feature17 NUMERIC
+@ATTRIBUTE child_feature18 NUMERIC
+@ATTRIBUTE joint_feature1 NUMERIC
+@ATTRIBUTE joint_feature2 NUMERIC
+@ATTRIBUTE class {0,1,2}
+
+@DATA

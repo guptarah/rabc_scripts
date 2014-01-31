@@ -1,0 +1,54 @@
+#! /bin/bash
+
+# script to make weka file for feature selection and classification
+
+output_file=$1
+rm $output_file
+
+# header of the file
+echo  "@RELATION rabc_features" >$output_file
+echo "" >>$output_file
+echo "@ATTRIBUTE session_id string" >>$output_file
+echo "@ATTRIBUTE task_id NUMERIC" >>$output_file
+
+for id in {1..18}
+	do
+	echo "@ATTRIBUTE psy_feature$id NUMERIC" >>$output_file
+ 	done
+
+for id in {1..18}
+	do
+	echo "@ATTRIBUTE child_feature$id NUMERIC" >>$output_file
+	done
+
+for id in {1..2}
+	do
+	echo "@ATTRIBUTE joint_feature$id NUMERIC" >>$output_file
+	done
+
+echo "@ATTRIBUTE class {0,1,2}" >>$output_file
+
+echo "" >>$output_file
+echo "@DATA" >>$output_file
+
+# core of the file
+for dirs in psyc_global_features/*
+do
+	for sub_dirs in $dirs/*
+	do
+		session_id=$(basename $sub_dirs)
+		eng_score_dir=../../../../features/eng_scores/$session_id
+		for task_id in {1..5}
+		do
+			psy_task_feature_file=$sub_dirs/$task_id
+			child_task_feature_file=child_global_features/$(basename $dirs)/$(basename $sub_dirs)/$task_id
+			joint_task_feature_file=joint_global_features/$(basename $dirs)/$(basename $sub_dirs)/$task_id	
+			eng_score_file=$eng_score_dir/$task_id				
+			cat <(paste -d' ' <(echo $session_id) <(echo $task_id)  $psy_task_feature_file $child_task_feature_file $joint_task_feature_file $eng_score_file) | sed 's/ /,/g' >> $output_file
+		done	
+	done
+done
+
+# grep out the irrelevant sessions RA049_FU
+grep -v "RA049_FU" $output_file >$output_file.clean.arff
+
