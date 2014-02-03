@@ -1,0 +1,31 @@
+@relation rabc_features-weka.filters.unsupervised.attribute.Remove-R1
+
+@attribute child_feature1 numeric
+@attribute child_feature2 numeric
+@attribute child_feature3 numeric
+@attribute child_feature4 numeric
+@attribute child_feature5 numeric
+@attribute child_feature6 numeric
+@attribute child_feature7 numeric
+@attribute child_feature8 numeric
+@attribute child_feature9 numeric
+@attribute child_feature10 numeric
+@attribute child_feature11 numeric
+@attribute child_feature12 numeric
+@attribute child_feature13 numeric
+@attribute child_feature14 numeric
+@attribute child_feature15 numeric
+@attribute child_feature16 numeric
+@attribute child_feature17 numeric
+@attribute child_feature18 numeric
+@attribute joint_feature1 numeric
+@attribute joint_feature2 numeric
+@attribute class {0,1,2}
+
+@data
+
+2,0.335922,0.438672,1.182699,4.255432,0.207648,-0.508596,0.702057,2.875515,-0.128271,-0.662625,0.03086,0.600373,-0.621468,-0.032884,0.015282,0.44543,-0.014272,0.841842,1,0
+3,0.118757,0.255641,0.600577,3.163649,0.011891,-0.58215,0.733503,3.377876,-0.571794,0.356187,0.94766,3.241638,0.575531,0.061122,0.009244,0.548853,0.031816,0.686241,0,0
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0.628625,0,0
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0.901319,0,0
+4,0.276373,-0.174366,1.052149,4.985496,0.183096,0.369658,0.867663,4.634856,0.495871,-0.025927,1.134506,4.31313,-0.374201,-0.025439,0.128004,1.29924,-0.143396,0.961628,5,1

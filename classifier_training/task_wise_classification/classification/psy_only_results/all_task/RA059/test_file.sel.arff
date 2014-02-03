@@ -1,0 +1,21 @@
+@relation 'rabc_features-weka.filters.supervised.attribute.AttributeSelection-Eweka.attributeSelection.CfsSubsetEval -M-Sweka.attributeSelection.BestFirst -P 1 -D 1 -N 10'
+
+@attribute task_id numeric
+@attribute psy_feature1 numeric
+@attribute psy_feature3 numeric
+@attribute psy_feature5 numeric
+@attribute joint_feature1 numeric
+@attribute class {0,1,2}
+
+@data
+
+1,2,0.151508,4.552163,1.08113,0
+2,8,0.062763,3.765315,0.915371,0
+3,9,0.109667,3.667449,1.033113,0
+4,2,1.02177,3.85117,0.936378,0
+5,7,-0.243181,4.448673,0.981586,0
+1,2,0.142336,3.503729,0.915685,1
+2,8,-0.299438,3.612764,0.658834,0
+3,5,0.194375,3.758382,0.882286,0
+4,2,0.70115,3.570433,0.857968,0
+5,7,0.031527,3.635125,0.88721,0

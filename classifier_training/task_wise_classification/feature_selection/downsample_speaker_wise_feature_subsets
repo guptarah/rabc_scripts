@@ -1,0 +1,15 @@
+#! /bin/bash
+
+input_dir=$1
+num_0_inst=$2
+
+for dirs in $input_dir/*
+do
+	train_file=$dirs/train_file.arff
+	
+	# downsample the 0 instances
+	grep '0$' $train_file > $dirs/train_file.0s
+	cat <(grep -v '0$' $train_file) <(grep '0$' $train_file | shuf | head -n $num_0_inst) >$dirs/train_file.ds.arff
+	
+done
+

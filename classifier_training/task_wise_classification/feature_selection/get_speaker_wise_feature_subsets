@@ -46,8 +46,12 @@ do
 	cat <(grep -v 'child_feature' header_file) <(cut -d',' -f1-19,38-40 test_features.temp.task_time_norm) >psy_features/$child_id/test_file.arff
 
 	# all the child features and the joint features minus where the child did not speak
-	cat <(grep -v 'psy_feature' header_file) <(cut -d',' -f1,20-40 train_features.temp.task_time_norm | sed 's/\(^[^,]*,\)/\1 /g' | grep -v ', 0' | sed 's/, /,/g') >child_features/$child_id/train_file.arff
-        cat <(grep -v 'psy_feature' header_file) <(cut -d',' -f1,20-40 test_features.temp.task_time_norm | sed 's/\(^[^,]*,\)/\1 /g' | grep -v ', 0' | sed 's/, /,/g') >child_features/$child_id/test_file.arff
+	cat <(grep -v 'psy_feature' header_file) <(cut -d',' -f1,20-40 train_features.temp.task_time_norm | sed 's/\(^[^,]*,\)/\1 /g' | grep -v ', 0' | sed 's/, /,/g') >child_features/$child_id/train_file.arff # with removing instances where child did not speak
+	cat <(grep -v 'psy_feature' header_file) <(cut -d',' -f1,20-40 train_features.temp.task_time_norm | sed 's/\(^[^,]*,\)/\1 /g' | sed 's/, /,/g') >child_features/$child_id/train_file.all.arff # with keeping all the instances 
+	cut -d',' -f20 train_features.temp.task_time_norm >child_features/$child_id/train_file.num_child_utr_feat
+	
+        # cat <(grep -v 'psy_feature' header_file) <(cut -d',' -f1,20-40 test_features.temp.task_time_norm | sed 's/\(^[^,]*,\)/\1 /g' | grep -v ', 0' | sed 's/, /,/g') >child_features/$child_id/test_file.arff # this removes instances from the test set too
+	cat <(grep -v 'psy_feature' header_file) <(cut -d',' -f1,20-40 test_features.temp.task_time_norm | sed 's/\(^[^,]*,\)/\1 /g' | sed 's/, /,/g') >child_features/$child_id/test_file.arff # this does not remove instances from the test set 
 	
 		
 done

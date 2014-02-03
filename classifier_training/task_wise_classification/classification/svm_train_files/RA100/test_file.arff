@@ -1,0 +1,15 @@
+@relation train_merge_svm
+
+@attribute feature1 numeric
+@attribute feature2 numeric
+@attribute feature3 numeric
+@attribute feature4 numeric
+@attribute feature5 numeric
+@attribute class {0,1,2}
+
+@data
+0.375,0.591,0.034,0.612,0.279,0
+0.654,0.269,0.077,0.858,0.141,0
+0.81,0.159,0.031,0.477,0.519,0
+0.953,0.004,0.043,0.778,0.176,0
+0.145,0.811,0.044,0.556,0.394,1

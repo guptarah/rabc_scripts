@@ -1,0 +1,49 @@
+@relation rabc_features-weka.filters.unsupervised.attribute.Remove-R1
+
+@attribute psy_feature1 numeric
+@attribute psy_feature2 numeric
+@attribute psy_feature3 numeric
+@attribute psy_feature4 numeric
+@attribute psy_feature5 numeric
+@attribute psy_feature6 numeric
+@attribute psy_feature7 numeric
+@attribute psy_feature8 numeric
+@attribute psy_feature9 numeric
+@attribute psy_feature10 numeric
+@attribute psy_feature11 numeric
+@attribute psy_feature12 numeric
+@attribute psy_feature13 numeric
+@attribute psy_feature14 numeric
+@attribute psy_feature15 numeric
+@attribute psy_feature16 numeric
+@attribute psy_feature17 numeric
+@attribute psy_feature18 numeric
+@attribute child_feature1 numeric
+@attribute child_feature2 numeric
+@attribute child_feature3 numeric
+@attribute child_feature4 numeric
+@attribute child_feature5 numeric
+@attribute child_feature6 numeric
+@attribute child_feature7 numeric
+@attribute child_feature8 numeric
+@attribute child_feature9 numeric
+@attribute child_feature10 numeric
+@attribute child_feature11 numeric
+@attribute child_feature12 numeric
+@attribute child_feature13 numeric
+@attribute child_feature14 numeric
+@attribute child_feature15 numeric
+@attribute child_feature16 numeric
+@attribute child_feature17 numeric
+@attribute child_feature18 numeric
+@attribute joint_feature1 numeric
+@attribute joint_feature2 numeric
+@attribute class {0,1,2}
+
+@data
+
+2,0.554348,0.217747,0.592976,4.222658,0.252389,0.113536,2.353093,12.518321,-0.018605,0.218153,1.054114,3.573478,0.159737,0.290008,0.533596,2.543254,0.279307,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1.055761,0,0
+8,0.430362,-0.035068,0.917733,3.485899,0.065435,0.21359,0.78543,5.740833,0.201092,-0.251647,1.048986,4.99965,-0.539731,-0.213132,0.532062,4.242544,-0.244305,4,0.107521,-0.547685,0.790882,2.912761,-1.091164,-0.009397,0.995064,4.436687,-0.266765,0.460437,0.523217,5.796483,0.420447,0.103565,0.01387,0.794816,0.150414,0.914254,1,0
+7,0.125167,-0.066185,1.047972,3.585223,0.242449,-0.267882,0.833,4.60977,-0.372177,0.470302,1.414475,4.071153,-0.032771,0.173288,0.570062,3.511572,0.300453,9,0.09229,0.084507,0.987567,2.912234,0.041838,-0.355848,0.690886,4.732728,-0.486767,0.292643,1.256249,4.317353,0.547428,0.031829,0.096865,2.799596,-0.012964,0.985413,0,1
+2,0.339286,1.086611,0.354262,2.988807,1.160068,0.445316,1.142271,5.287938,0.437095,-0.728147,0.080194,1.09377,-0.709336,-0.996003,0.707856,2.814686,-0.784959,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0.95666,0,0
+7,0.803253,-0.098004,0.96771,3.652439,0.063439,-0.137233,0.842427,5.987771,-0.204059,0.030958,0.722646,4.973033,-0.150381,0.305061,0.972077,6.264712,0.348111,3,0.093217,-0.030238,0.384783,2.344238,0.027865,0.655021,1.147554,4.196904,0.418233,-0.644357,0.14781,1.393815,-0.767024,-0.139256,0.077395,0.653729,0.089767,0.87479,3,1
