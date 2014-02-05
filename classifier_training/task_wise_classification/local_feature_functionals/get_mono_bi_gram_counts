@@ -1,0 +1,19 @@
+#! /bin/bash
+
+# script to get count of mono and bigrams for the task_id.numerized files in local feature directories
+input_dir=$1
+for dirs in $input_dir/*
+do
+        for sub_dirs in $dirs/*
+        do
+                for task_ids in {1..5}
+                do
+                        files=$sub_dirs/$task_ids.numerized
+			echo $files
+                        python get_ngram_counts.py $files
+                done            
+        done
+done
+
+
+

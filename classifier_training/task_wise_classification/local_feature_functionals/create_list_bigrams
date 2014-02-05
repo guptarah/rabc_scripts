@@ -1,0 +1,13 @@
+#! /bin/bash
+
+# script to create a list of bigrams from list_of_used_words file
+
+rm list_of_bigrams
+
+while read line1
+do
+	while read line2
+	do
+		echo $line1"+"$line2 >> list_of_bigrams
+	done < "list_of_used_words"
+done < "list_of_used_words" 

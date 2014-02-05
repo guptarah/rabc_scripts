@@ -1,0 +1,5 @@
+# to get a directory of window len W with mono and bi gram counts
+
+get_sequence_per_task W
+apply_sed_command local_feature_stringsW
+./get_mono_bi_gram_counts local_feature_stringsW 

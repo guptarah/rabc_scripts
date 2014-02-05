@@ -1,0 +1,58 @@
+#! /bin/bash
+
+# script to get psy+joint features, child+joint features, all features whereby normalizing the task length feature
+# make dirs for each child
+
+input_file=$1 #the arff file already made ex: ../global_feature_functionals/all_features.clean.arff
+feature_dir=$2
+
+rm -r $feature_dir'_cv_split' 
+mkdir $feature_dir'_cv_split' 
+
+for dirs in $feature_dir/* 
+do
+	child_id=$(basename $dirs)
+	echo $child_id
+	mkdir $feature_dir'_cv_split'/$child_id
+	
+	# get train and test file
+	grep -v "^RA" $input_file > $feature_dir'_cv_split'/$child_id/test_features.arff
+	grep "^$child_id" $input_file >> $feature_dir'_cv_split'/$child_id/test_features.arff
+	grep -v "^RA" $input_file > $feature_dir'_cv_split'/$child_id/train_features.arff
+	grep -v "^$child_id" $input_file | grep "^RA" >> $feature_dir'_cv_split'/$child_id/train_features.arff
+
+	weka_jar=/home/rcf-proj/mv/guptarah/interspeech_ch/scripts/weka-3-6-6/weka.jar
+
+	java -Xmx2g -classpath $weka_jar  weka.filters.unsupervised.attribute.Remove -R 1,2 -b -i $feature_dir'_cv_split'/$child_id/train_features.arff -o $feature_dir'_cv_split'/$child_id/train_features.ds1.arff -r $feature_dir'_cv_split'/$child_id/test_features.arff -s $feature_dir'_cv_split'/$child_id/test_features.ds1.arff
+
+
+	java -Xmx2g  -classpath $weka_jar weka.filters.supervised.attribute.AttributeSelection -E "weka.attributeSelection.CfsSubsetEval -M" -S "weka.attributeSelection.BestFirst -D 1 -N 10 -P 1" -b -i $feature_dir'_cv_split'/$child_id/train_features.ds1.arff -o $feature_dir'_cv_split'/$child_id/train_features.words_arff -r $feature_dir'_cv_split'/$child_id/test_features.ds1.arff -s $feature_dir'_cv_split'/$child_id/test_features.words_arff
+
+	# get dictionaries from the train set
+	grep '0$' $feature_dir'_cv_split'/$child_id/train_features.ds1.arff | cut -d',' -f1-1560 > $feature_dir'_cv_split'/$child_id/dict0_elem
+	grep '1$' $feature_dir'_cv_split'/$child_id/train_features.ds1.arff | cut -d',' -f1-1560 > $feature_dir'_cv_split'/$child_id/dict1_elem
+	grep '2$' $feature_dir'_cv_split'/$child_id/train_features.ds1.arff | cut -d',' -f1-1560 > $feature_dir'_cv_split'/$child_id/dict2_elem
+
+	# get elements to project on the above dictionaries 
+        grep '^[0-9]' $feature_dir'_cv_split'/$child_id/train_features.ds1.arff | cut -d',' -f1-1560 > $feature_dir'_cv_split'/$child_id/train_elements
+        grep '^[0-9]' $feature_dir'_cv_split'/$child_id/test_features.ds1.arff | cut -d',' -f1-1560 > $feature_dir'_cv_split'/$child_id/test_elements
+
+	# get projection features
+	python get_projection_features.py $feature_dir'_cv_split'/$child_id/
+
+	grep '^[0-9]' $feature_dir'_cv_split'/$child_id/train_features.words_arff | rev | cut -d',' -f2- | rev >  $feature_dir'_cv_split'/$child_id/word_feat.train
+	grep '^[0-9]' $feature_dir'_cv_split'/$child_id/test_features.words_arff | rev | cut -d',' -f2- | rev >  $feature_dir'_cv_split'/$child_id/word_feat.test
+
+	grep '^[0-9]' $feature_dir'_cv_split'/$child_id/train_features.words_arff | rev | cut -d',' -f1 | rev >  $feature_dir'_cv_split'/$child_id/word_feat.train.lables
+        grep '^[0-9]' $feature_dir'_cv_split'/$child_id/test_features.words_arff | rev | cut -d',' -f1 | rev >  $feature_dir'_cv_split'/$child_id/word_feat.test.lables
+
+
+	# concatenating the projection and word files 
+	cat <(echo "@relation rabc_sampled_features") <(echo "") <(grep "^@attribute" $feature_dir'_cv_split'/$child_id/train_features.words_arff) <(echo "") <(echo "@data") <(paste -d','  $feature_dir'_cv_split'/$child_id/word_feat.train  $feature_dir'_cv_split'/$child_id/projection_feat.train $feature_dir'_cv_split'/$child_id/word_feat.train.lables) > $feature_dir'_cv_split'/$child_id/all_train.arff
+	cat <(echo "@relation rabc_sampled_features") <(echo "") <(grep "^@attribute" $feature_dir'_cv_split'/$child_id/test_features.words_arff) <(echo "") <(echo "@data") <(paste -d','  $feature_dir'_cv_split'/$child_id/word_feat.test  $feature_dir'_cv_split'/$child_id/projection_feat.test $feature_dir'_cv_split'/$child_id/word_feat.test.lables) > $feature_dir'_cv_split'/$child_id/all_test.arff
+	
+	sed -i 's/@attribute class/@attribute projection1 numeric\n@attribute projection2 numeric\n@attribute projection3 numeric\n@attribute class/g' $feature_dir'_cv_split'/$child_id/all_train.arff
+	sed -i 's/@attribute class/@attribute projection1 numeric\n@attribute projection2 numeric\n@attribute projection3 numeric\n@attribute class/g' $feature_dir'_cv_split'/$child_id/all_test.arff
+
+
+done

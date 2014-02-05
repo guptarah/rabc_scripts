@@ -1,0 +1,50 @@
+#! /bin/bash
+
+# script to make weka file for feature selection and classification
+
+input_file=$1
+output_file=$2
+rm $output_file
+
+# header of the file
+echo  "@RELATION rabc_features" >$output_file
+echo "" >>$output_file
+echo "@ATTRIBUTE session_id string" >>$output_file
+echo "@ATTRIBUTE task_id NUMERIC" >>$output_file
+
+for id in {1..39}
+	do
+	echo "@ATTRIBUTE mono_feature$id NUMERIC" >>$output_file
+ 	done
+
+for id in {1..1521}
+	do
+	echo "@ATTRIBUTE bi_feature$id NUMERIC" >>$output_file
+	done
+
+echo "@ATTRIBUTE class {0,1,2}" >>$output_file
+
+echo "" >>$output_file
+echo "@DATA" >>$output_file
+
+# core of the file
+for dirs in $input_file/*
+do
+	for sub_dirs in $dirs/*
+	do
+		session_id=$(basename $sub_dirs)
+		eng_score_dir=../../../../features/eng_scores/$session_id
+		for task_id in {1..5}
+		do
+			mono_file=$sub_dirs/$task_id.numerized.mono.norm.flat
+			bi_file=$sub_dirs/$task_id.numerized.bi.norm.flat
+			eng_score_file=$eng_score_dir/$task_id			
+			echo $mono_file
+			echo $bi_file	
+			cat <(paste -d' ' <(echo $session_id) <(echo $task_id)  $mono_file $bi_file $eng_score_file) | sed 's/ /,/g' >> $output_file
+		done	
+	done
+done
+
+# grep out the irrelevant sessions RA049_FU
+grep -v "RA049_FU" $output_file >$output_file.clean.arff

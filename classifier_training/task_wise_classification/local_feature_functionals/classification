@@ -1,0 +1,42 @@
+#! /bin/bash
+
+# script to classify given the selected features
+input_dir=$1
+
+for dirs in $input_dir/*
+do
+	#train_file=$dirs/train_features.ds2.arff # if u want to use feature selection # this file was created using cfssubseteval
+
+	jvm_mem=2g
+        weka_jar=/home/rcf-proj/mv/guptarah/interspeech_ch/scripts/weka-3-6-6/weka.jar
+        model_file=$dirs/model
+        C=1
+        prediction_file=$dirs/prediction
+
+	train_file=$dirs/all_train.arff
+	train_file_ds=$dirs/all_train.ds.arff
+	train_file_ds_dummy=$dirs/all_train.ds.dummy.arff
+	train_file_dummy=$dirs/all_train.dummy.arff
+
+	test_file=$dirs/all_test.arff
+	test_file_dummy=$dirs/all_test.ds.dummy.arff
+
+	cat <(grep -v '0$' $train_file | grep -v '1$') <(grep '0$' $train_file | shuf | head -n 25) <( grep '1$' $train_file | shuf | head -n 30) >$train_file_ds
+
+	cat <(head -n 2 $train_file_ds) <(echo "@attribute dummy numeric") <(tail -n +3 $train_file_ds) >$train_file_ds_dummy
+	sed -i 's/\(^[0-9]\)/9,\1/g' $train_file_ds_dummy
+
+	cat <(head -n 2 $train_file) <(echo "@attribute dummy numeric") <(tail -n +3 $train_file) >$train_file_dummy
+        sed -i 's/\(^[0-9]\)/9,\1/g' $train_file_dummy
+	
+	cat <(head -n 2 $test_file) <(echo "@attribute dummy numeric") <(tail -n +3 $test_file) >$test_file_dummy
+	sed -i 's/\(^[0-9]\)/9,\1/g' $test_file_dummy
+
+	java -Xmx$jvm_mem -classpath $weka_jar weka.classifiers.meta.FilteredClassifier -v -o -no-cv -t $train_file_ds_dummy -d $model_file -F "weka.filters.unsupervised.attribute.Remove -R 1" -W weka.classifiers.functions.SMO -- -M -C $C -L 0.0010 -P 1.0E-12 -N 1 -V -1 -W 1 -K "weka.classifiers.functions.supportVector.PolyKernel -C 250007 -E 1.0"
+	
+	java -Xmx$jvm_mem -classpath $weka_jar weka.classifiers.meta.FilteredClassifier -o -l "$model_file" -T $test_file_dummy -p 0 -distribution > $prediction_file #prediction on test set
+		
+	java -Xmx$jvm_mem -classpath $weka_jar weka.classifiers.meta.FilteredClassifier -o -l "$model_file" -T $train_file_dummy -p 0 -distribution > $prediction_file.train #prediction on train set
+
+		
+done 

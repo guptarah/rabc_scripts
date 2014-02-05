@@ -10,10 +10,6 @@ command = 'cat '+result_dir+'/*/prediction | grep " [0-9]" | sed \'s/\*//g;s/+//
 print command
 system(command)
 
-command = 'cat '+result_dir+'/*/prediction.sel | grep " [0-9]" | sed \'s/\*//g;s/+//g;s/[\ ][\ ]*/\t/g;s/[0-9]://g\' | cut -f3-5 | sed \'s/,/\t/g\' > results.sel'
-print command
-system(command)
-
 # for the unselected features
 results = numpy.loadtxt('results')
 

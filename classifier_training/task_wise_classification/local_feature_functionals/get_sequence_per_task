@@ -1,0 +1,29 @@
+#! /bin/bash
+
+# script to get a string of words for each task for each session given a time for word duration
+
+win_len=$1
+
+rm -r local_feature_strings$win_len
+mkdir local_feature_strings$win_len
+rm all_words
+
+
+for dirs in ../../../../features/task_wise_features/*
+do
+	for sub_dirs in $dirs/*
+	do
+		for task_id in {1..5}
+		do	
+			mkdir local_feature_strings$win_len/$(basename $dirs)
+			outdir=local_feature_strings$win_len/$(basename $dirs)/$(basename $sub_dirs)
+			mkdir $outdir
+			feature_file=$sub_dirs'/task_features.task_id_rect.'$task_id.normalized
+			output_file=$outdir/$task_id
+			python get_word_sequence.py $feature_file $output_file $win_len
+			
+			echo "" >> all_words
+			cat $output_file >> all_words	
+		done
+	done
+done 

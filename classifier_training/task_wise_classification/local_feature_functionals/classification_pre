@@ -1,0 +1,43 @@
+#! /bin/bash
+
+# script to classify given the selected features
+input_dir=$1
+
+for dirs in $input_dir/*
+do
+	#train_file=$dirs/train_features.ds2.arff # if u want to use feature selection # this file was created using cfssubseteval
+
+	jvm_mem=2g
+        weka_jar=/home/rcf-proj/mv/guptarah/interspeech_ch/scripts/weka-3-6-6/weka.jar
+        model_file=$dirs/model
+        C=1
+        prediction_file=$dirs/prediction
+
+	train_file=$dirs/train_features.ds1.arff
+	train_file_ds=$dirs/train_features.ds2.inst_ds.arff
+	#cat <(grep -v '0$' $train_file) <(grep '0$' $train_file | shuf | head -n 40) >$train_file_ds
+
+	#echo "java -Xmx$jvm_mem -classpath $weka_jar weka.filters.supervised.attribute.AttributeSelection -E \"weka.attributeSelection.OneRAttributeEval\" -S \"weka.attributeSelection.Ranker -N 10\" -b -i $train_file_ds -o $dirs/train_features.ds2.arff -r $dirs/test_features.ds1.arff -s $dirs/test_features.ds2.arff"
+
+	java -Xmx$jvm_mem -classpath $weka_jar weka.filters.supervised.attribute.AttributeSelection -E "weka.attributeSelection.CfsSubsetEval -M" -S "weka.attributeSelection.BestFirst -D 1 -N 10 -P 1" -b -i $train_file -o $dirs/train_features.ds2.arff -r $dirs/test_features.ds1.arff -s $dirs/test_features.ds2.arff
+
+	cat <(grep -v '0$' $dirs/train_features.ds2.arff | grep -v '1$') <(grep '0$' $dirs/train_features.ds2.arff | shuf | head -n 40) <( grep '1$' $dirs/train_features.ds2.arff | shuf | head -n 40) >$train_file_ds
+
+	train_file=$train_file_ds
+	
+	cat <(head -n 2 $train_file) <(echo "@attribute dummy numeric") <(tail -n +3 $train_file) >$dirs/train_features.ds2.dummy.arff
+	sed -i 's/\(^[0-9]\)/9,\1/g' $dirs/train_features.ds2.dummy.arff
+	
+	echo $train_file	
+
+	test_file=$dirs/test_features.ds2.arff
+
+	cat <(head -n 2 $test_file) <(echo "@attribute dummy numeric") <(tail -n +3 $test_file) >$dirs/test_features.ds2.dummy.arff
+	sed -i 's/\(^[0-9]\)/9,\1/g' $dirs/test_features.ds2.dummy.arff
+
+	#echo "java -Xmx$jvm_mem -classpath $weka_jar weka.classifiers.meta.FilteredClassifier -v -o -no-cv -t $dirs/train_features.ds2.dummy.arff -d $model_file -F \"weka.filters.unsupervised.attribute.Remove -R 1\" -W weka.classifiers.functions.SMO -- -M -C $C -L 0.0010 -P 1.0E-12 -N 1 -V -1 -W 1 -K "weka.classifiers.functions.supportVector.PolyKernel -C 250007 -E 1.0""	
+	java -Xmx$jvm_mem -classpath $weka_jar weka.classifiers.meta.FilteredClassifier -v -o -no-cv -t $dirs/train_features.ds2.dummy.arff -d $model_file -F "weka.filters.unsupervised.attribute.Remove -R 1" -W weka.classifiers.functions.SMO -- -M -C $C -L 0.0010 -P 1.0E-12 -N 1 -V -1 -W 1 -K "weka.classifiers.functions.supportVector.PolyKernel -C 250007 -E 1.0"
+	
+	#echo "java -Xmx$jvm_mem -classpath $weka_jar weka.classifiers.meta.FilteredClassifier -o -l \"$model_file\" -T $dirs/test_features.ds2.dummy.arff -p 0 -distribution > $prediction_file"
+	java -Xmx$jvm_mem -classpath $weka_jar weka.classifiers.meta.FilteredClassifier -o -l "$model_file" -T $dirs/test_features.ds2.dummy.arff -p 0 -distribution > $prediction_file	
+done 

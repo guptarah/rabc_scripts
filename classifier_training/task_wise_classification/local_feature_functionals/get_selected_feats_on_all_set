@@ -1,0 +1,4 @@
+java -Xmx2g -classpath /home/rcf-proj/mv/guptarah/interspeech_ch/scripts/weka-3-6-6/weka.jar  weka.filters.unsupervised.attribute.Remove -R 1,2 -i all_features.clean.arff -o temp1
+
+
+java -Xmx2g -classpath /home/rcf-proj/mv/guptarah/interspeech_ch/scripts/weka-3-6-6/weka.jar  weka.filters.supervised.attribute.AttributeSelection -E "weka.attributeSelection.CfsSubsetEval -M"  -S "weka.attributeSelection.BestFirst -D 1 -N 10 -P 1" -i temp1 -o temp2

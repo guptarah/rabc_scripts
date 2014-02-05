@@ -1,0 +1,14 @@
+#! /bin/bash
+
+input_dir=$1
+for dirs in $input_dir/*
+do
+	for sub_dirs in $dirs/*
+	do
+		for files in $sub_dirs/*
+		do
+			echo $files
+			./sed_command $files $files.numerized
+		done		
+	done
+done

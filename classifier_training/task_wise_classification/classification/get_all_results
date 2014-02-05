@@ -1,0 +1,30 @@
+#! /bin/bash
+
+# scripts to get results after combining the psy and child results
+
+# get results on individual speaker streams
+python get_accuracy_tree.py psy_only_results/all_task
+./get_downsampled_result_file psy_only_results/ child_only_results/usage_indicator
+python get_accuracy_tree.py child_only_results/all_task
+# downsample child to get relevant results 
+./get_downsampled_result_file child_only_results/ child_only_results/usage_indicator
+
+# get accuracy on combined
+python get_accuracy_tree.py svm_train_files/
+mv results svm_train_files/
+./get_downsampled_result_file svm_train_files/ child_only_results/usage_indicator
+
+
+# get results on utterances where only psy spoke
+echo "psy only speech results"
+python get_accuracy_tree_given_result_file.py psy_only_results/results.ds.no_child_speech
+
+# get results on utterances where both spoke only given psy model
+echo "both speech results only given the child speech"
+python get_accuracy_tree_given_result_file.py psy_only_results/results.ds
+
+# get results on utterances where both spoke given combo model
+echo "both speech results given the svm combo model"
+python get_accuracy_tree_given_result_file.py svm_train_files/results.ds
+ 
+

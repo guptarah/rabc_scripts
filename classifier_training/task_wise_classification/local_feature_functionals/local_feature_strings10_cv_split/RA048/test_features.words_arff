@@ -1,0 +1,21 @@
+@relation 'rabc_features-weka.filters.unsupervised.attribute.Remove-R1,2-weka.filters.supervised.attribute.AttributeSelection-Eweka.attributeSelection.CfsSubsetEval -M-Sweka.attributeSelection.BestFirst -P 1 -D 1 -N 10'
+
+@attribute mono_feature1 numeric
+@attribute bi_feature678 numeric
+@attribute bi_feature809 numeric
+@attribute bi_feature919 numeric
+@attribute bi_feature1223 numeric
+@attribute class {0,1,2}
+
+@data
+
+0,0,0,0.019608,0,0
+0.013464,0,0,0.007353,0,0
+0.017189,0,0,0.001012,0,0
+0.038835,0,0,0.009756,0,0
+0.013722,0,0,0.024055,0,0
+0.038647,0,0,0.009709,0,2
+0,0,0,0.007843,0,0
+0,0,0,0,0,0
+0,0,0,0.032258,0,0
+0,0,0,0.023758,0,0

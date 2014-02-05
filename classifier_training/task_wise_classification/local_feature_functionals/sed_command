@@ -1,0 +1,43 @@
+#! /bin/bash
+input_file=$1
+output_file=$2
+cp $input_file $output_file
+sed -i s/child_ones_high_high/1/g $output_file
+sed -i s/child_ones_high_low/2/g $output_file
+sed -i s/child_ones_high_trans/3/g $output_file
+sed -i s/child_ones_low_high/4/g $output_file
+sed -i s/child_ones_low_low/5/g $output_file
+sed -i s/child_ones_low_trans/6/g $output_file
+sed -i s/child_ones_trans_high/7/g $output_file
+sed -i s/child_ones_trans_low/8/g $output_file
+sed -i s/child_ones_trans_trans/9/g $output_file
+sed -i s/child_trans_high_high/10/g $output_file
+sed -i s/child_trans_high_low/11/g $output_file
+sed -i s/child_trans_high_trans/12/g $output_file
+sed -i s/child_trans_low_high/13/g $output_file
+sed -i s/child_trans_low_low/14/g $output_file
+sed -i s/child_trans_low_trans/15/g $output_file
+sed -i s/child_trans_trans_high/16/g $output_file
+sed -i s/child_trans_trans_low/17/g $output_file
+sed -i s/child_trans_trans_trans/18/g $output_file
+sed -i s/no_speech/19/g $output_file
+sed -i s/overlap_partial/20/g $output_file
+sed -i s/overlap/21/g $output_file
+sed -i s/psy_ones_high_high/22/g $output_file
+sed -i s/psy_ones_high_low/23/g $output_file
+sed -i s/psy_ones_high_trans/24/g $output_file
+sed -i s/psy_ones_low_high/25/g $output_file
+sed -i s/psy_ones_low_low/26/g $output_file
+sed -i s/psy_ones_low_trans/27/g $output_file
+sed -i s/psy_ones_trans_high/28/g $output_file
+sed -i s/psy_ones_trans_low/29/g $output_file
+sed -i s/psy_ones_trans_trans/30/g $output_file
+sed -i s/psy_trans_high_high/31/g $output_file
+sed -i s/psy_trans_high_low/32/g $output_file
+sed -i s/psy_trans_high_trans/33/g $output_file
+sed -i s/psy_trans_low_high/34/g $output_file
+sed -i s/psy_trans_low_low/35/g $output_file
+sed -i s/psy_trans_low_trans/36/g $output_file
+sed -i s/psy_trans_trans_high/37/g $output_file
+sed -i s/psy_trans_trans_low/38/g $output_file
+sed -i s/psy_trans_trans_trans/39/g $output_file

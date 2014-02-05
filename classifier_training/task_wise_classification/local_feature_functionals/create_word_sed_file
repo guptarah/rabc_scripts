@@ -1,0 +1,17 @@
+#! /bin/bash
+
+rm sed_command
+
+echo "#! /bin/bash" >>sed_command
+echo "input_file=\$1" >>sed_command
+echo "output_file=\$2" >>sed_command
+
+echo "cp \$input_file \$output_file" >>sed_command
+
+a=0
+while read line
+	do a=$(($a+1))
+	echo "sed -i s/"$line"/"$a"/g \$output_file" >>sed_command
+done < "list_of_used_words"
+
+chmod +x sed_command
