@@ -21,7 +21,8 @@ do
 	test_file=$dirs/all_test.arff
 	test_file_dummy=$dirs/all_test.ds.dummy.arff
 
-	cat <(grep -v '0$' $train_file | grep -v '1$') <(grep '0$' $train_file | shuf | head -n 25) <( grep '1$' $train_file | shuf | head -n 30) >$train_file_ds
+#	cat <(grep -v '0$' $train_file | grep -v '1$' ) <(grep '0$' $train_file | shuf | head -n 25) <(grep '1$' $train_file | shuf | head -n 30) >$train_file_ds
+	cat <(grep -v '0$' $train_file | grep -v '1$' ) <(grep '0$' $train_file | shuf | head -n 25) <(grep '1$' $train_file | shuf | head -n 30) >$train_file_ds
 
 	cat <(head -n 2 $train_file_ds) <(echo "@attribute dummy numeric") <(tail -n +3 $train_file_ds) >$train_file_ds_dummy
 	sed -i 's/\(^[0-9]\)/9,\1/g' $train_file_ds_dummy

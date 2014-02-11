@@ -1,0 +1,50 @@
+#! /bin/bash
+
+# script to combine the projection features from various time granularities
+
+rm -r projection_features_combined_granularities
+mkdir projection_features_combined_granularities
+
+dir1=local_feature_strings10_cv_split
+dir2=local_feature_strings10_cv_split
+dir3=local_feature_strings10_cv_split
+
+for dirs in $dir1/*
+do
+
+	echo $(basename $dirs)
+	save_dir='projection_features_combined_granularities/'$(basename $dirs)
+	mkdir $save_dir
+
+	# making test and train files
+	printf "@relation rabc_projection_distances\n\n@attribute proj0 numeric\n@attribute proj1 numeric\n@attribute proj2 numeric\n@attribute proj3 numeric\n@attribute class {0,1,2}\n\n@data\n" >$save_dir/train_file.arff
+	paste -d',' $dirs/projection_feat.train $dirs/projection_feat.train $dir2/$(basename $dirs)/projection_feat.train  $dir3/$(basename $dirs)/projection_feat.train $dirs/word_feat.train.lables >>$save_dir/train_file.arff
+	
+	printf "@relation rabc_projection_distances\n\n@attribute proj0 numeric\n@attribute proj1 numeric\n@attribute proj2 numeric\n@attribute proj3 numeric\n@attribute class {0,1,2}\n\n@data\n" >$save_dir/test_file.arff
+	paste -d',' $dirs/projection_feat.test $dirs/projection_feat.test $dir2/$(basename $dirs)/projection_feat.test  $dir3/$(basename $dirs)/projection_feat.test $dirs/word_feat.test.lables >>$save_dir/test_file.arff
+
+	# downsample train filei
+	printf "@relation rabc_projection_distances\n\n@attribute proj0 numeric\n@attribute proj1 numeric\n@attribute proj2 numeric\n@attribute proj3 numeric\n@attribute class {0,1,2}\n\n@data\n" >$save_dir/train_file.ds.arff
+	cat <(grep '0$' $save_dir/train_file.arff | head -n 20) <(grep '1$' $save_dir/train_file.arff | head -n 20) <(grep '2$' $save_dir/train_file.arff | head -n 20) >> $save_dir/train_file.ds.arff
+
+	
+
+
+	jvm_mem=2g
+        weka_jar=/home/rcf-proj/mv/guptarah/interspeech_ch/scripts/weka-3-6-6/weka.jar
+        model_file=$save_dir/model
+	prediction_file=$save_dir/prediction
+        C=1
+
+	train_file=$save_dir/train_file.arff
+	train_file_ds=$save_dir/train_file.ds.arff
+	test_file=$save_dir/test_file.arff
+
+	java -Xmx$jvm_mem -classpath $weka_jar weka.classifiers.meta.FilteredClassifier -v -o -no-cv -t $train_file_ds -d $model_file -F "weka.filters.unsupervised.attribute.Remove -R 1,2,4" -W weka.classifiers.functions.SMO -- -M -C $C -L 0.0010 -P 1.0E-12 -N 1 -V -1 -W 1 -K "weka.classifiers.functions.supportVector.PolyKernel -C 250007 -E 1.0"
+
+	java -Xmx$jvm_mem -classpath $weka_jar weka.classifiers.meta.FilteredClassifier -o -l "$model_file" -T $test_file -p 0 -distribution > $prediction_file #prediction on test set
+
+	java -Xmx$jvm_mem -classpath $weka_jar weka.classifiers.meta.FilteredClassifier -o -l "$model_file" -T $train_file -p 0 -distribution > $prediction_file.train #prediction on test set
+
+
+done

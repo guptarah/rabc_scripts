@@ -2,4 +2,7 @@
 
 get_sequence_per_task W
 apply_sed_command local_feature_stringsW
-./get_mono_bi_gram_counts local_feature_stringsW 
+./get_mono_bi_gram_counts local_feature_stringsW
+make_weka_file local_feature_stringsW all_featuresW 
+get_speaker_wise_feature_subsets all_featuresW.clean.arff local_feature_stringsW 
+ 

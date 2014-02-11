@@ -13,34 +13,44 @@ do
 	
 	# prepare the train file
 	train_results_psy=$dirs/prediction.train_set
+	train_results_child=../classification/child_only_results/all_task/$(basename $dirs)/prediction.all_train
 	train_results_local=../local_feature_functionals/local_feature_strings10_cv_split/$(basename $dirs)/prediction.train
+	child_utr_file=../feature_selection/child_features/$(basename $dirs)/train_file.num_child_utr_feat
 	
-	paste <(cat $train_results_psy | sed 's/[\ ][+,\ ]*/\t/g'| sed 's/\t[\t]*/\t/g' | grep '^.[0-9]') <(cat $train_results_local | sed 's/[\ ][+,\ ]*/\t/g'| sed 's/\t[\t]*/\t/g' | grep '^.[0-9]') | sed 's/\t[\t]*/\t/g' > $save_dir/svm_feats
+	paste $child_utr_file <(cat $train_results_psy | sed 's/[\ ][+,\ ]*/\t/g'| sed 's/\t[\t]*/\t/g' | grep '^.[0-9]') <(cat $train_results_child | sed 's/[\ ][+,\ ]*/\t/g'| sed 's/\t[\t]*/\t/g' | grep '^.[0-9]') <(cat $train_results_local | sed 's/[\ ][+,\ ]*/\t/g'| sed 's/\t[\t]*/\t/g'| grep '^.[0-9]' )| sed 's/\t[\t]*/\t/g' > $save_dir/svm_feats
 	
-	paste <(cat $save_dir/svm_feats | cut -f5,9 | sed 's/\*//g;s/,/\t/g') <(grep -v '^0' $save_dir/svm_feats | cut -f3 | sed 's/[0-9]://g' ) | cut -f1,2,3,4,5,7 > $save_dir/svm_feat.clean
+	paste <(grep -v '^0' $save_dir/svm_feats | cut -f5,9,13 | sed 's/\*//g;s/,/\t/g') <(grep -v '^0' $save_dir/svm_feats | cut -f3 | sed 's/[0-9]://g' ) | cut -f1,2,3,4,5,7,8,10 > $save_dir/svm_feat.clean
 
 	# make the arff file for training the svm
-        printf "@relation train_merge_svm\n\n@attribute feature1 numeric\n@attribute feature2 numeric\n@attribute feature3 numeric\n@attribute feature4 numeric\n@attribute feature5 numeric\n@attribute class {0,1,2}\n\n@data\n" >$save_dir/train_file.arff
-
+        printf "@relation train_merge_svm\n\n@attribute feature1 numeric\n@attribute feature2 numeric\n@attribute feature3 numeric\n@attribute feature4 numeric\n@attribute feature5 numeric\n@attribute feature6 numeric\n@attribute feature7 numeric\n@attribute class {0,1,2}\n\n@data\n" >$save_dir/train_file.arff
+	
 	cat <(sed 's/\t/,/g' $save_dir/svm_feat.clean) >> $save_dir/train_file.arff
-	cat <(grep -v '0$' $save_dir/train_file.arff) <(grep '0$' $save_dir/train_file.arff | shuf | head -n 40) > $save_dir/train_file.ds.arff
+
+	cat <(grep -v '0$' $save_dir/train_file.arff) <(grep '0$' $save_dir/train_file.arff | shuf | head -n 18) > $save_dir/train_file.ds.arff
+
+	#cat <(grep -v '2$' $save_dir/train_file.arff) <(grep '1$' $save_dir/train_file.arff | shuf | head -n 20) <(grep '2$' $save_dir/train_file.arff | shuf | head -n 20) > $save_dir/train_file.ds.arff
+
 
 	# prepare the test file
-        test_results_psy=$dirs/prediction
-        test_results_local=../local_feature_functionals/local_feature_strings10_cv_split/$(basename $dirs)/prediction
+	test_results_psy=$dirs/prediction
+	test_results_child=../classification/child_only_results/all_task/$(basename $dirs)/prediction
+	test_results_local=../local_feature_functionals/local_feature_strings10_cv_split/$(basename $dirs)/prediction
 
-	paste <(cat $test_results_psy | sed 's/[\ ][+,\ ]*/\t/g'| sed 's/\t[\t]*/\t/g' | grep '^.[0-9]')  <(cat $test_results_local | sed 's/[\ ][+,\ ]*/\t/g'| sed 's/\t[\t]*/\t/g' | grep '^.[0-9]') | sed 's/\t[\t]*/\t/g' | cut -f3,5,9 | sed 's/\*//g;s/,/\t/g;s/[0-9]://g' >$save_dir/svm_feats.test
+	paste <(cat $test_results_psy | sed 's/[\ ][+,\ ]*/\t/g'| sed 's/\t[\t]*/\t/g' | grep '^.[0-9]') <(cat $test_results_child | sed 's/[\ ][+,\ ]*/\t/g'| sed 's/\t[\t]*/\t/g' | grep '^.[0-9]') <(cat $test_results_local | sed 's/[\ ][+,\ ]*/\t/g'| sed 's/\t[\t]*/\t/g'| grep '^.[0-9]' )| sed 's/\t[\t]*/\t/g' > $save_dir/svm_feats.test	
 
-	printf "@relation train_merge_svm\n\n@attribute feature1 numeric\n@attribute feature2 numeric\n@attribute feature3 numeric\n@attribute feature4 numeric\n@attribute feature5 numeric\n@attribute class {0,1,2}\n\n@data\n" >$save_dir/test_file.arff
+	paste <(cat $save_dir/svm_feats.test | cut -f5,9,13 | sed 's/\*//g;s/,/\t/g') <(cat $save_dir/svm_feats.test | cut -f3 | sed 's/[0-9]://g' ) | cut -f1,2,3,4,5,7,8,10 > $save_dir/svm_feat.test.clean
 
-	cat <( paste <(cut -f2,3,4,5,6 $save_dir/svm_feats.test) <(cut -f1 $save_dir/svm_feats.test) | sed 's/\t/,/g') >> $save_dir/test_file.arff
+	printf "@relation train_merge_svm\n\n@attribute feature1 numeric\n@attribute feature2 numeric\n@attribute feature3 numeric\n@attribute feature4 numeric\n@attribute feature5 numeric\n@attribute feature6 numeric\n@attribute feature7 numeric\n@attribute class {0,1,2}\n\n@data\n" >$save_dir/test_file.arff	
 
-	# train svm and test
+	cat <(sed 's/\t/,/g' $save_dir/svm_feat.test.clean) >> $save_dir/test_file.arff  
+	
+	 # train svm and test
         model_file=$save_dir/model
         C=1     
         weka_jar=/home/rcf-proj/mv/guptarah/interspeech_ch/scripts/weka-3-6-6/weka.jar
 
 	java -Xmx2g -classpath $weka_jar  weka.classifiers.meta.FilteredClassifier -v -o -no-cv -t $save_dir/train_file.ds.arff -d $model_file -F "weka.filters.unsupervised.attribute.Remove -R 1" -W weka.classifiers.functions.SMO -- -M -C $C -L 0.0010 -P 1.0E-12 -N 1 -V -1 -W 1 -K "weka.classifiers.functions.supportVector.PolyKernel -C 250007 -E 1.0"
-	java -Xmx2g -classpath $weka_jar weka.classifiers.meta.FilteredClassifier -o -l "$model_file" -T $save_dir/test_file.arff -p 0 -distribution > $save_dir/prediction #results on test set
+
+	java -Xmx2g -classpath $weka_jar weka.classifiers.meta.FilteredClassifier -o -l "$model_file" -T $save_dir/test_file.arff -p 0 -distribution > $save_dir/prediction	
 	
 done 

@@ -51,8 +51,10 @@ do
 	cat <(echo "@relation rabc_sampled_features") <(echo "") <(grep "^@attribute" $feature_dir'_cv_split'/$child_id/train_features.words_arff) <(echo "") <(echo "@data") <(paste -d','  $feature_dir'_cv_split'/$child_id/word_feat.train  $feature_dir'_cv_split'/$child_id/projection_feat.train $feature_dir'_cv_split'/$child_id/word_feat.train.lables) > $feature_dir'_cv_split'/$child_id/all_train.arff
 	cat <(echo "@relation rabc_sampled_features") <(echo "") <(grep "^@attribute" $feature_dir'_cv_split'/$child_id/test_features.words_arff) <(echo "") <(echo "@data") <(paste -d','  $feature_dir'_cv_split'/$child_id/word_feat.test  $feature_dir'_cv_split'/$child_id/projection_feat.test $feature_dir'_cv_split'/$child_id/word_feat.test.lables) > $feature_dir'_cv_split'/$child_id/all_test.arff
 	
-	sed -i 's/@attribute class/@attribute projection1 numeric\n@attribute projection2 numeric\n@attribute projection3 numeric\n@attribute class/g' $feature_dir'_cv_split'/$child_id/all_train.arff
-	sed -i 's/@attribute class/@attribute projection1 numeric\n@attribute projection2 numeric\n@attribute projection3 numeric\n@attribute class/g' $feature_dir'_cv_split'/$child_id/all_test.arff
+	#sed -i 's/@attribute class/@attribute projection1 numeric\n@attribute projectionbi1 numeric\n@attribute projection2 numeric\n@attribute projection2bi numeric\n@attribute projection3 numeric\n@attribute projection3bi numeric\n@attribute class/g' $feature_dir'_cv_split'/$child_id/all_train.arff
+	#sed -i 's/@attribute class/@attribute projection1 numeric\n@attribute projectionbi1 numeric\n@attribute projection2 numeric\n@attribute projection2bi numeric\n@attribute projection3 numeric\n@attribute projection3bi numeric\n@attribute class/g' $feature_dir'_cv_split'/$child_id/all_test.arff
 
+	sed -i 's/@attribute class/@attribute projection1 numeric\n@attribute projection2 numeric\n@attribute projection3 numeric\n@attribute class/g' $feature_dir'_cv_split'/$child_id/all_train.arff
+        sed -i 's/@attribute class/@attribute projection1 numeric\n@attribute projection2 numeric\n@attribute projection3 numeric\n@attribute class/g' $feature_dir'_cv_split'/$child_id/all_test.arff
 
 done

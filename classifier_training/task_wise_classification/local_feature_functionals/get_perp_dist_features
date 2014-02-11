@@ -1,0 +1,14 @@
+#! /bin/bash
+
+# get the perpendicular distance features from the projections
+input_dir=$1
+
+
+for dirs in $input_dir/*
+do
+	train_file=$dirs/projection_feat.train
+	test_file=$dirs/projection_feat.test
+	train_lables=$dirs/word_feat.train.lables
+
+	python get_perp_distances.py $train_file $train_lables $test_file	
+done 

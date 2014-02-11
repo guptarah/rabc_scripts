@@ -1,0 +1,19 @@
+@relation rabc_sampled_features
+
+@attribute mono_feature1 numeric
+@attribute bi_feature10 numeric
+@attribute bi_feature735 numeric
+@attribute bi_feature1272 numeric
+@attribute bi_feature1393 numeric
+@attribute bi_feature1507 numeric
+@attribute projection1 numeric
+@attribute projection2 numeric
+@attribute projection3 numeric
+@attribute class {0,1,2}
+
+@data
+0,0,0,0,0,0,0.153478,0.148308,0.153836,0
+0,0,0.002,0.002,0,0,0.492348,0.520001,0.611973,0
+0.023897,0,0.001842,0.001842,0,0,0.591905,0.630427,0.749662,1
+0,0,0.014085,0,0,0,0.419206,0.432002,0.505365,0
+0,0,0,0,0,0,0.210812,0.208503,0.225521,0

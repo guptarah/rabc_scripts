@@ -16,6 +16,7 @@ len_seq = len(sequence)
 mono_count = numpy.zeros((num_words,1))
 bi_count = numpy.zeros((num_words,num_words))
 
+
 for word_id in range(len_seq):
 	mono_count[sequence[word_id]-1] += 1.0
 
@@ -39,3 +40,7 @@ bi_normalized_flat = numpy.matrix(numpy.reshape(bi_normalized,num_words*num_word
 print bi_normalized_flat.shape
 numpy.savetxt(sequence_file+'.mono.norm.flat',mono_normalized.T,fmt='%f')
 numpy.savetxt(sequence_file+'.bi.norm.flat',bi_normalized_flat,fmt='%f') 
+
+numpy.savetxt(sequence_file+'.mono.count',numpy.matrix(numpy.sum(mono_count)),fmt='%f')
+numpy.savetxt(sequence_file+'.bi.count',numpy.matrix(numpy.sum(bi_count)),fmt='%f')
+

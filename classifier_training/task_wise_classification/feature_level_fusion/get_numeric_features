@@ -1,0 +1,9 @@
+#! /bin/bash
+
+input_dir=$1
+for dirs in $input_dir/*
+do
+	grep '^[0-9].*' $dirs/train_file.arff >$dirs/train.num
+	grep '^[0-9].*' $dirs/test_file.arff >$dirs/test.num
+
+done

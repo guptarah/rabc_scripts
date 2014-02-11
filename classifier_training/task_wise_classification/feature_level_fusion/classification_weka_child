@@ -1,0 +1,47 @@
+#! /bin/bash
+
+jvm_mem=2g
+weka_jar=/home/rcf-proj/mv/guptarah/interspeech_ch/scripts/weka-3-6-6/weka.jar
+C=1
+
+rm -r child_only_results
+mkdir child_only_results
+mkdir child_only_results/all_task
+rm child_only_results/usage_indicator
+
+for dirs in child_features/*
+do
+	echo $(basename $dirs)
+	mkdir child_only_results/all_task/$(basename $dirs)
+	save_dir=child_only_results/all_task/$(basename $dirs)	
+	prediction_file=$save_dir/prediction
+
+	train_file=$dirs/train_file.arff
+	test_file=$dirs/test_file.arff
+	train_file_all=$dirs/train_file.all.arff
+
+	train_file_ds=$save_dir/train_file.ds.arff
+	model_file=$save_dir/model
+
+	# downsample the training file
+        cat <(grep -v '0$' $train_file | grep -v '1$' ) <(grep '0$' $train_file | head -n 15) <(grep '1$' $train_file | head -n 15) >$train_file_ds
+
+
+	# make the training file after removing task id
+
+
+	####################################
+	# train and test on all the features
+	####################################
+
+	# svm classifier
+	java -Xmx$jvm_mem -classpath $weka_jar weka.classifiers.meta.FilteredClassifier -v -o -no-cv -t $train_file_ds  -d $model_file -F "weka.filters.unsupervised.attribute.Remove -R 1,23-24" -W weka.classifiers.functions.SMO -- -M -C $C -L 0.0010 -P 1.0E-12 -N 1 -V -1 -W 1 -K "weka.classifiers.functions.supportVector.PolyKernel -C 250007 -E 1.0"
+
+	java -Xmx$jvm_mem -classpath $weka_jar weka.classifiers.meta.FilteredClassifier -o -l "$model_file" -T $test_file -p 0 -distribution > $prediction_file # prediction on the test set
+
+	java -Xmx$jvm_mem -classpath $weka_jar weka.classifiers.meta.FilteredClassifier -o -l "$model_file" -T $train_file_all -p 0 -distribution > $prediction_file.all_train # prediction on the train set
+
+	
+	# get if or not to use child probabilities
+	cat $test_file | grep '^[0-9]' | cut -d',' -f2 >> child_only_results/usage_indicator
+done 

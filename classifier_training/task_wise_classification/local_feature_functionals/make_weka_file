@@ -38,6 +38,8 @@ do
 		do
 			mono_file=$sub_dirs/$task_id.numerized.mono.norm.flat
 			bi_file=$sub_dirs/$task_id.numerized.bi.norm.flat
+			mono_count=$sub_dirs/$task_id.numerized.mono.count
+			bi_count=$sub_dirs/$task_id.numerized.bi.count
 			eng_score_file=$eng_score_dir/$task_id			
 			echo $mono_file
 			echo $bi_file	
